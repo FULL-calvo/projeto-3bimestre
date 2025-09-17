@@ -1,10 +1,7 @@
 // Conexão com o banco de dados usando Prisma
-import { PrismaClient } from "@prisma/client";
-
-// Criar uma única instância do Prisma (padrão Singleton)
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-// Conectar ao banco quando o módulo for carregado
 prisma
   .$connect()
   .then(() => {
@@ -14,5 +11,4 @@ prisma
     console.error("❌ Erro ao conectar:", error.message);
   });
 
-// Exportar a instância para usar nas rotas
-export default prisma;
+module.exports = prisma;

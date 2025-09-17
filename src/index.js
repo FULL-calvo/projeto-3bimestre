@@ -1,16 +1,17 @@
 // Importar as bibliotecas necessárias
-import express from "express";
-import dotenv from "dotenv";
-import prisma from "./db.js"; // Importar nossa conexão com o banco
+const express = require("express");
+const dotenv = require("dotenv");
+const prisma = require("./db");
+const storeRoutes = require("./routes/storeRoutes");
+const productRoutes = require("./routes/productRoutes");
 
-// Carregar variáveis de ambiente do arquivo .env
 dotenv.config();
 
-// Criar aplicação Express
 const app = express();
 
-// Middleware para processar JSON nas requisições
 app.use(express.json());
+app.use("/stores", storeRoutes);
+app.use("/products", productRoutes);
 
 //Healthcheck
 app.get("/", (_req, res) => res.json({ ok: true, service: "API 3º Bimestre" }));
@@ -18,17 +19,15 @@ app.get("/", (_req, res) => res.json({ ok: true, service: "API 3º Bimestre" }))
 //CREATE: POST /usuarios
 app.post("/usuarios", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email } = req.body;
     const novoUsuario = await prisma.user.create({
-      data: { name, email, password }
+      data: { name, email }
     });
-
     res.status(201).json(novoUsuario);
   } catch (error) {
     if (error.code === "P2002") {
       return res.status(409).json({ error: "E-mail já cadastrado" });
     }
-
     res.status(500).json({ error: "Erro ao criar usuário" });
   }
 });
