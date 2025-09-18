@@ -1,5 +1,5 @@
 // Conexão com o banco de dados usando Prisma
-const { PrismaClient } = require("@prisma/client");
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 prisma
@@ -11,4 +11,4 @@ prisma
     console.error("❌ Erro ao conectar:", error.message);
   });
 
-module.exports = prisma;
+export default prisma;

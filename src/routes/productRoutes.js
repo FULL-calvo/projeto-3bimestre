@@ -1,6 +1,7 @@
-const express = require('express');
+
+import express from 'express';
+import prisma from '../db.js';
 const router = express.Router();
-const prisma = require('../db');
 
 // Criar produto
 router.post('/', async (req, res) => {
@@ -61,4 +62,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

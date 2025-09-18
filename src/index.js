@@ -1,9 +1,9 @@
 // Importar as bibliotecas necessárias
-const express = require("express");
-const dotenv = require("dotenv");
-const prisma = require("./db");
-const storeRoutes = require("./routes/storeRoutes");
-const productRoutes = require("./routes/productRoutes");
+import express from "express";
+import dotenv from "dotenv";
+import prisma from "./db.js";
+import storeRoutes from "./routes/storeRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
 dotenv.config();
 
