@@ -12,6 +12,7 @@ router.post('/', async (req, res) => {
     });
     res.status(201).json(product);
   } catch (error) {
+    console.error('Erro POST /products:', error);
     res.status(500).json({ error: 'Erro ao criar produto' });
   }
 });
@@ -45,6 +46,7 @@ router.put('/:id', async (req, res) => {
     });
     res.json(product);
   } catch (error) {
+    console.error('Erro PUT /products/:id:', error);
     res.status(500).json({ error: 'Erro ao atualizar produto' });
   }
 });
@@ -58,6 +60,7 @@ router.delete('/:id', async (req, res) => {
     });
     res.json({ message: 'Produto removido com sucesso' });
   } catch (error) {
+    console.error('Erro DELETE /products/:id:', error);
     res.status(500).json({ error: 'Erro ao remover produto' });
   }
 });
