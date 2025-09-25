@@ -38,7 +38,12 @@ router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { name } = req.body;
-    const store = await prisma.store.update({
+      // Verifica se a loja existe antes de atualizar
+      const lojaExistente = await prisma.store.findUnique({ where: { id: Number(id) } });
+      if (!lojaExistente) {
+        return res.status(404).json({ error: 'Loja não encontrada' });
+      }
+      const store = await prisma.store.update({
       where: { id: Number(id) },
       data: { name }
     });
