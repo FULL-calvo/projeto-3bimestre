@@ -17,7 +17,8 @@ model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   name      String?
-  store     Store?   // 1-1: um usuário tem uma loja
+  password  String
+  store     Store?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -27,7 +28,7 @@ model Store {
   name      String
   userId    Int       @unique
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  products  Product[] // 1-N: uma loja tem vários produtos
+  products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }

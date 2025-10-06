@@ -1,17 +1,22 @@
 // Importar as bibliotecas necessárias
 import express from "express";
 import dotenv from "dotenv";
-import prisma from "./db.js";
-import storeRoutes from "./routes/storeRoutes.js";
-import productRoutes from "./routes/productRoutes.js";
+import storesRoutes from "./routes/stores.js";
+import productsRoutes from "./routes/products.js";
+import prisma from "./db.js"; // Importar nossa conexão com o banco
 
+// Carregar variáveis de ambiente do arquivo .env
 dotenv.config();
 
+// Criar aplicação Express
 const app = express();
 
+// Middleware para processar JSON nas requisições
 app.use(express.json());
-app.use("/stores", storeRoutes);
-app.use("/products", productRoutes);
+
+// Rotas de stores e products
+app.use("/stores", storesRoutes);
+app.use("/products", productsRoutes);
 
 //Healthcheck
 app.get("/", (_req, res) => res.json({ ok: true, service: "API 3º Bimestre" }));
@@ -19,12 +24,13 @@ app.get("/", (_req, res) => res.json({ ok: true, service: "API 3º Bimestre" }))
 //CREATE: POST /usuarios
 app.post("/usuarios", async (req, res) => {
   try {
-    const { name, email, senha } = req.body;
+    const { name, email, password } = req.body;
     const novoUsuario = await prisma.user.create({
-      data: { name, email, senha }
+      data: { name, email, password }
     });
     res.status(201).json(novoUsuario);
   } catch (error) {
+    console.error(error); // Mostra o erro detalhado no terminal
     if (error.code === "P2002") {
       return res.status(409).json({ error: "E-mail já cadastrado" });
     }
@@ -44,30 +50,22 @@ app.get("/usuarios", async (_req, res) => {
   }
 });
 
+
 //UPDATE: PUT /usuarios/:id
 app.put("/usuarios/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, senha } = req.body;
-      // Verifica se o usuário existe antes de atualizar
-      const usuarioExistente = await prisma.user.findUnique({ where: { id: Number(id) } });
-      if (!usuarioExistente) {
-        return res.status(404).json({ error: "Usuário não encontrado" });
-      }
-      const usuarioAtualizado = await prisma.user.update({
+    const { name, email, password } = req.body;
+    const usuarioAtualizado = await prisma.user.update({
       where: { id: Number(id) },
-      data: { name, email, senha }
+      data: { name, email, password }
     });
     res.json(usuarioAtualizado);
   } catch (error) {
-    console.error("Erro PUT /usuarios/:id:", error);
-    if (error.stack) {
-      console.error("Stack trace:", error.stack);
-    }
     if (error.code === "P2002") {
       return res.status(409).json({ error: "E-mail já cadastrado" });
     }
-    res.status(500).json({ error: "Erro ao atualizar usuário", details: error.message });
+    res.status(500).json({ error: "Erro ao atualizar usuário" });
   }
 });
 
@@ -75,15 +73,13 @@ app.put("/usuarios/:id", async (req, res) => {
 app.delete("/usuarios/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    await prisma.user.delete({
-      where: { id: Number(id) }
-    });
-    res.json({ message: "Usuário removido com sucesso" });
+    await prisma.user.delete({ where: { id: Number(id) } });
+    res.status(204).send();
   } catch (error) {
-    console.error("Erro DELETE /usuarios/:id:", error);
     res.status(500).json({ error: "Erro ao remover usuário" });
   }
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
